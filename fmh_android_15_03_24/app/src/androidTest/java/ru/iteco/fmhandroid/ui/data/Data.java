@@ -12,13 +12,10 @@ public class Data {
     public static final String validPassword = "password2";
     public static final String invalidLogin = "login";
     public static final String invalidPassword = "password";
-    public static final String emptyLogin = " ";
-    public static final String emptyPassword = " ";
-
-
+    public static final String emptyLogin = "";
+    public static final String emptyPassword = "";
     public static final String urlPrivacyPolicy = "https://vhospice.org/#/privacy-policy/";
     public static final String urlTermsOfUse = "https://vhospice.org/#/terms-of-use";
-
     public static final String categoryNotification = "Объявление";
     public static final String categoryBirthday = "День рождения";
     public static final String categoryUnion = "Профсоюз";
