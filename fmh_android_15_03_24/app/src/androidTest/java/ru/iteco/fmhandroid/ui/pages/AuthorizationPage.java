@@ -56,11 +56,13 @@ public class AuthorizationPage {
 
     @Step("Проверка видимости сообщения об ошибке при пустых логине и/или пароле.")
     public void loginOrPasswordDoesNotBeEmpty() {
+        Allure.step("Проверяем видимость сообщения об ошибке при пустых логине и/или пароле.");
         waitUntilVisible(checkToast(R.string.empty_login_or_password, true));
     }
 
     @Step("Проверка видимости сообщения об ошибке при неправильных логине и/или пароле.")
     public void loginOrPasswordIsWrong() {
+        Allure.step("Проверяем видимость сообщения об ошибке при неправильных логине и/или пароле.");
         waitUntilVisible(checkToast(R.string.wrong_login_or_password, true));
     }
 

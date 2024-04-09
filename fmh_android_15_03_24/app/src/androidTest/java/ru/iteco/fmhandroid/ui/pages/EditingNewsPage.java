@@ -150,6 +150,7 @@ public class EditingNewsPage {
 
     @Step("Проверка видимости сообщения об ошибке при создании новости с пустыми полями.")
     public void fieldsDoesNotBeEmpty() {
+        Allure.step("Проверяем видимость сообщения об ошибке при создании новости с пустыми полями.");
         waitUntilVisible(checkToast(R.string.empty_fields, true));
     }
 }
