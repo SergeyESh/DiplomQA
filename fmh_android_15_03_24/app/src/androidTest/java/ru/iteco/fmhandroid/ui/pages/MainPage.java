@@ -8,7 +8,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static ru.iteco.fmhandroid.ui.data.DataHelper.waitElement;
-import static ru.iteco.fmhandroid.ui.pages.NewsPage.editNewsButton;
 
 import androidx.test.espresso.ViewInteraction;
 
@@ -18,19 +17,27 @@ import ru.iteco.fmhandroid.R;
 
 public class MainPage {
 
-    public static ViewInteraction mainMenuButton = onView(allOf(withId(R.id.main_menu_image_button)));
-    public static ViewInteraction newsButton = onView(withText(R.string.news));
-    public static ViewInteraction logOutButton = onView(allOf(withId(R.id.authorization_image_button)));
-    public static ViewInteraction quotesButton = onView(allOf(withId(R.id.our_mission_image_button)));
-    public static ViewInteraction aboutButton = onView(withText(R.string.about));
-    public static ViewInteraction allNewsButton = onView(allOf(withId(R.id.all_news_text_view)));
-    public static int mainMenuButtonId = R.id.main_menu_image_button;
-    public static int allNewsButtonId = R.id.all_news_text_view;
-    public static int LogOutId = R.id.authorization_image_button;
-    public static int quotesButtonID = R.id.our_mission_image_button;
+    private ViewInteraction mainMenuButton = onView(allOf(withId(R.id.main_menu_image_button)));
+    private ViewInteraction newsButton = onView(withText(R.string.news));
+    private ViewInteraction logOutButton = onView(allOf(withId(R.id.authorization_image_button)));
+    private ViewInteraction quotesButton = onView(allOf(withId(R.id.our_mission_image_button)));
+    private ViewInteraction aboutButton = onView(withText(R.string.about));
+    private ViewInteraction allNewsButton = onView(allOf(withId(R.id.all_news_text_view)));
+    private int mainMenuButtonId = R.id.main_menu_image_button;
+    private int allNewsButtonId = R.id.all_news_text_view;
+    public int LogOutId = R.id.authorization_image_button;
+    private int quotesButtonID = R.id.our_mission_image_button;
+
+    @Step("Выход из аккаунта.")
+    public void logOut() {
+        Allure.step("Выходим из аккаунта, если авторизованы.");
+        onView(withId(LogOutId)).perform(click());
+        onView(withId(android.R.id.title)).check(matches(isDisplayed()));
+        onView(withId(android.R.id.title)).perform(click());
+    }
 
     @Step("Переход в раздел \"Новости\"")
-    public static void goToNewsPage() {
+    public void goToNewsPage() {
         Allure.step("Тап \"Главное меню\" (бургер-меню), выбрать раздел \"Новости\"");
         waitElement(mainMenuButtonId);
         mainMenuButton.perform(click());
@@ -39,14 +46,14 @@ public class MainPage {
     }
 
     @Step("Переход в раздел \"Новости\" через кнопку-ссылку \"Все новости\"")
-    public static void goToNewsPageByAllNewsButton() {
+    public void goToNewsPageByAllNewsButton() {
         Allure.step("Тап \"Все новости\" на Главной странице");
         waitElement(allNewsButtonId);
         allNewsButton.perform(click());
     }
 
     @Step("Переход в раздел \"О приложении\"")
-    public static void goToAboutPage() {
+    public void goToAboutPage() {
         Allure.step("Тап \"Главное меню\" (бургер-меню), выбрать раздел \"О приложении\"");
         waitElement(mainMenuButtonId);
         mainMenuButton.perform(click());
@@ -55,16 +62,15 @@ public class MainPage {
     }
 
     @Step("Переход в раздел \"Тематические цитаты\"")
-    public static void goToQuotesPage() {
+    public void goToQuotesPage() {
         Allure.step("Тап \"Наша миссия\" (значок бабочка)");
         waitElement(quotesButtonID);
         quotesButton.perform(click());
     }
 
-    @Step("Редактировать новость")
-    public static void goToNewsEditingPage() {
-        Allure.step("Тап на кнопку \"карандаш\"");
-        editNewsButton.perform(click());
+    @Step("Проверка видимости кнопки выхода из аккаунта.")
+    public void logOutIsVisible() {
+        logOutButton.check(matches(isDisplayed()));
     }
 
 }

@@ -1,16 +1,6 @@
 package ru.iteco.fmhandroid.ui.tests;
 
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static ru.iteco.fmhandroid.ui.data.DataHelper.generateScreenshotName;
-import static ru.iteco.fmhandroid.ui.pages.AboutPage.versionText;
-import static ru.iteco.fmhandroid.ui.pages.AuthorizationPage.checkLogInAndLogInIfNot;
-import static ru.iteco.fmhandroid.ui.pages.MainPage.goToAboutPage;
-import static ru.iteco.fmhandroid.ui.pages.MainPage.goToNewsPage;
-import static ru.iteco.fmhandroid.ui.pages.MainPage.goToNewsPageByAllNewsButton;
-import static ru.iteco.fmhandroid.ui.pages.MainPage.goToQuotesPage;
-import static ru.iteco.fmhandroid.ui.pages.NewsPage.filterNewsButton;
-import static ru.iteco.fmhandroid.ui.pages.QuotesPage.quoteText;
 
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.filters.LargeTest;
@@ -24,6 +14,11 @@ import io.qameta.allure.android.rules.ScreenshotRule;
 import io.qameta.allure.android.runners.AllureAndroidJUnit4;
 import io.qameta.allure.kotlin.junit4.DisplayName;
 import ru.iteco.fmhandroid.ui.AppActivity;
+import ru.iteco.fmhandroid.ui.pages.AboutPage;
+import ru.iteco.fmhandroid.ui.pages.AuthorizationPage;
+import ru.iteco.fmhandroid.ui.pages.MainPage;
+import ru.iteco.fmhandroid.ui.pages.NewsPage;
+import ru.iteco.fmhandroid.ui.pages.QuotesPage;
 
 
 @LargeTest
@@ -31,9 +26,16 @@ import ru.iteco.fmhandroid.ui.AppActivity;
 @DisplayName("Навигация по приложению")
 public class NavigationTest {
 
+    AboutPage aboutPage = new AboutPage();
+    AuthorizationPage authorizationPage = new AuthorizationPage();
+    MainPage mainPage = new MainPage();
+    NewsPage newsPage = new NewsPage();
+    QuotesPage quotesPage = new QuotesPage();
+
+
     @Before
     public void setUp(){
-        checkLogInAndLogInIfNot();
+        authorizationPage.checkLogInAndLogInIfNot();
     }
 
     @Rule
@@ -46,29 +48,29 @@ public class NavigationTest {
     @Test
     @DisplayName("Переход через \"Главное меню\" (бургер-меню) в раздел в раздел \"Новости\"")
     public void goToNewsPageTest() {
-        goToNewsPage();
-        filterNewsButton.check(matches(isDisplayed()));
+        mainPage.goToNewsPage();
+        newsPage.checkNewsPage();
     }
 
     @Test
     @DisplayName("Переход в раздел \"Новости\" из раздела \"Главная\" через кнопку-ссылку \"Все новости\"")
     public void goToNewsPageByAllNewsButtonTest() {
-        goToNewsPageByAllNewsButton();
-        filterNewsButton.check(matches(isDisplayed()));
+        mainPage.goToNewsPageByAllNewsButton();
+        newsPage.checkNewsPage();
     }
 
     @Test
     @DisplayName("Переход через \"Главное меню\" (бургер-меню) в раздел в раздел \"О приложении\"")
     public void goToAboutPageTest() {
-        goToAboutPage();
-        versionText.check(matches(isDisplayed()));
+        mainPage.goToAboutPage();
+        aboutPage.checkAboutPage();
     }
 
     @Test
     @DisplayName("Переход в раздел \"Тематические цитаты\" с помощью кнопки \"Наша миссия\" (бабочка) на верхней панели")
     public void goToQuotesPageTest() {
-        goToQuotesPage();
-        quoteText.check(matches(isDisplayed()));
+        mainPage.goToQuotesPage();
+        quotesPage.checkQuotesPage();
     }
 
 }

@@ -10,10 +10,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.not;
 import static ru.iteco.fmhandroid.ui.data.DataHelper.RecyclerViewMatcher.withRecyclerView;
-import static ru.iteco.fmhandroid.ui.pages.AuthorizationPage.enterButtonId;
-import static ru.iteco.fmhandroid.ui.pages.AuthorizationPage.fieldLogin;
-import static ru.iteco.fmhandroid.ui.pages.MainPage.LogOutId;
-import static ru.iteco.fmhandroid.ui.pages.MainPage.logOutButton;
 
 import android.content.res.Resources;
 import android.os.IBinder;
@@ -25,7 +21,6 @@ import android.widget.TextView;
 
 import androidx.annotation.IdRes;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.espresso.PerformException;
 import androidx.test.espresso.Root;
 import androidx.test.espresso.UiController;
@@ -283,39 +278,9 @@ public class DataHelper {
         };
     }
 
-    public static boolean isLogIn() {
-        boolean check =false;
-        try {
-            waitElement(enterButtonId);
-            fieldLogin.check(matches(isDisplayed()));
-            check = true;
-            return check;
-        } catch (NoMatchingViewException e) {
-            check = false;
-            return check;
-        } finally {
-            return check;
-        }
-    }
-    public static boolean isLogOut() {
-        boolean check =false;
-        try {
-            waitElement(LogOutId);
-            logOutButton.check(matches(isDisplayed()));
-            check = true;
-            return check;
-        } catch (NoMatchingViewException e) {
-            check = false;
-            return check;
-        } finally {
-            return check;
-        }
-    }
-
     public static String generateScreenshotName(String testName) {
         String timestamp = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
         return testName + "_" + timestamp + ".png";
     }
-
 
 }

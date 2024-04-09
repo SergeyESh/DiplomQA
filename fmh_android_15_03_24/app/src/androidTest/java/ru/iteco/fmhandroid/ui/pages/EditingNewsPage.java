@@ -4,9 +4,7 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
-import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItem;
 import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static androidx.test.espresso.contrib.RecyclerViewActions.scrollToPosition;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
@@ -19,11 +17,11 @@ import static ru.iteco.fmhandroid.ui.data.Data.dateNews;
 import static ru.iteco.fmhandroid.ui.data.Data.descriptionNews;
 import static ru.iteco.fmhandroid.ui.data.Data.timeNews;
 import static ru.iteco.fmhandroid.ui.data.Data.tittleNews;
-import static ru.iteco.fmhandroid.ui.data.Data.tittleNews3;
+import static ru.iteco.fmhandroid.ui.data.DataHelper.checkToast;
 import static ru.iteco.fmhandroid.ui.data.DataHelper.clickChildViewWithId;
 import static ru.iteco.fmhandroid.ui.data.DataHelper.getTextFromNews;
 import static ru.iteco.fmhandroid.ui.data.DataHelper.waitElement;
-import static ru.iteco.fmhandroid.ui.pages.NewsPage.newsListId;
+import static ru.iteco.fmhandroid.ui.data.DataHelper.waitUntilVisible;
 
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.contrib.RecyclerViewActions;
@@ -43,16 +41,17 @@ public class EditingNewsPage {
     public static ViewInteraction saveButton = onView(withId(R.id.save_button));
     public static ViewInteraction confirmDeleteNewsButton = onView(allOf(withId(android.R.id.button1)));
     public static int confirmDeleteNewsButtonId = android.R.id.button1;
+    NewsPage newsPage = new NewsPage();
 
-    public static void scrollNews(int i) {
-        onView(withId(newsListId))
+    public void scrollNews(int i) {
+        onView(withId(newsPage.newsListId))
                 .perform(scrollToPosition(i))
                 .perform(actionOnItemAtPosition(i, scrollTo()))
                 .check(matches(isDisplayed()));
     }
 
     @Step("Создание новой новости")
-    public static void addNews(String category, String tittle, String date, String time, String description) {
+    public void addNews(String category, String tittle, String date, String time, String description) {
         Allure.step("Тап на кнопку \"+\". Заполняем поля: категория, заголовок, дата, время, описание. Нажать кнопку \"Сохранить\"");
         addNewsButton.perform(click());
         categoryField.perform(replaceText(category));
@@ -64,18 +63,18 @@ public class EditingNewsPage {
     }
 
     @Step("Поиск новости в списке по загаловку")
-    public static void findNewsWithTittle(String tittle) {
+    public void findNewsWithTittle(String tittle) {
         Allure.step("Ищем новость в списке по заголовку " + tittle);
-        waitElement(newsListId);
-        onView(withId(newsListId))
+        waitElement(newsPage.newsListId);
+        onView(withId(newsPage.newsListId))
                 .check(matches(isDisplayed()))
                 .perform(RecyclerViewActions.scrollTo(hasDescendant(allOf(withText(tittle)))));
-        onView(withId(newsListId))
+        onView(withId(newsPage.newsListId))
                 .check(matches(isDisplayed()));
     }
 
     @Step("Выбираем новость для редактирования")
-    public static void editNews(String tittle) {
+    public void editNews(String tittle) {
         Allure.step("Выбираем новость - " +tittle + " для редактирования");
         findNewsWithTittle(tittle);
         onView(allOf(withId(R.id.news_item_material_card_view), hasDescendant(withText(tittle))))
@@ -83,7 +82,7 @@ public class EditingNewsPage {
     }
 
     @Step("Проверяем, что все поля новости соответствуют заданным при ее создании")
-    public static void checkNews() {
+    public void checkNews() {
         Allure.step("Проверяем, что все поля новости соответствуют заданным");
         onView(withText(tittleNews)).check(matches(isDisplayed()));
         onView(withText(dateNews)).check(matches(isDisplayed()));
@@ -92,21 +91,21 @@ public class EditingNewsPage {
     }
 
     @Step("Проверка заголовка после изменения")
-    public static void checkTittleAfterChange(String tittle) {
+    public void checkTittleAfterChange(String tittle) {
         Allure.step("Проверяем, что заголовок изменен");
         onView(withText(tittle)).check(matches(isDisplayed()));
     }
 
     @Step("Смена заголовка новости")
-    public static void changeTittleNews(String newTittle) {
+    public void changeTittleNews(String newTittle) {
         Allure.step("Меняем заголовок новости на " + newTittle);
         tittleField.perform(replaceText(newTittle));
         saveButton.perform(click());
-        waitElement(newsListId);
+        waitElement(newsPage.newsListId);
     }
 
     @Step("Удаление новости")
-    public static void deleteNews(String tittle) {
+    public void deleteNews(String tittle) {
         Allure.step("Удаляем выбранную новость - " + tittle);
         findNewsWithTittle(tittle);
         onView(allOf(withId(R.id.news_item_material_card_view), hasDescendant(withText(tittle))))
@@ -115,7 +114,7 @@ public class EditingNewsPage {
     }
 
     @Step("Проверка, что новость удалена")
-    public static void checkNewsDeleted(int itemCount, String tittle) {
+    public void checkNewsDeleted(int itemCount, String tittle) {
         Allure.step("Проверяем, что новость удалена");
         for (int i = 0; i < itemCount; i++) {
             scrollNews(i);
@@ -125,9 +124,32 @@ public class EditingNewsPage {
     }
 
     @Step
-    public static void confirmDelete() {
+    public void confirmDelete() {
         Allure.step("Подтверждаем удаление новости нажимая ОК");
         waitElement(confirmDeleteNewsButtonId);
         confirmDeleteNewsButton.perform(click());
+    }
+
+    @Step("Создание новости с пустыми полями")
+    public void addNewsWithEmptyFields() {
+        Allure.step("Тап на кнопку \"+\". Оставить пустыми поля: категория, заголовок, дата, время, описание. Нажать кнопку \"Сохранить\"");
+        addNewsButton.perform(click());
+        saveButton.perform(click());
+    }
+
+    @Step("Создание новости с пустым полем заоголовка")
+    public void addNewsWithEmptyTittle(String category, String date, String time, String description) {
+        Allure.step("Тап на кнопку \"+\". Заполнить поля, кроме заголовка: категория, дата, время, описание. Нажать кнопку \"Сохранить\"");
+        addNewsButton.perform(click());
+        categoryField.perform(replaceText(category));
+        dateField.perform(replaceText(date));
+        timeField.perform(replaceText(time));
+        descriptionField.perform(replaceText(description));
+        saveButton.perform(click());
+    }
+
+    @Step("Проверка видимости сообщения об ошибке при создании новости с пустыми полями.")
+    public void fieldsDoesNotBeEmpty() {
+        waitUntilVisible(checkToast(R.string.empty_fields, true));
     }
 }

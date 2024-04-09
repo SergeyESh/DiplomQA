@@ -2,6 +2,8 @@ package ru.iteco.fmhandroid.ui.pages;
 
 import static androidx.fragment.app.FragmentManager.TAG;
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertEquals;
@@ -22,10 +24,10 @@ import ru.iteco.fmhandroid.R;
 
 public class AboutPage {
 
-    public static ViewInteraction versionText = onView(allOf(withId(R.id.about_version_title_text_view)));
+    private ViewInteraction versionText = onView(allOf(withId(R.id.about_version_title_text_view)));
 
     @Step("Проверяем существование страницы")
-    public static void isPageExists(String url) {
+    public void isPageExists(String url) {
         Allure.step("Проверяем существование страницы: " + url);
         try {
             OkHttpClient client = new OkHttpClient();
@@ -41,6 +43,12 @@ public class AboutPage {
         } finally {
             Espresso.pressBack();
         }
+    }
+
+    @Step("Проверяем видимость страницы \"О приложении\"")
+    public void checkAboutPage() {
+        Allure.step("Проверяем, что открыт раздел \"О приложении\"");
+        versionText.check(matches(isDisplayed()));
     }
 
 }

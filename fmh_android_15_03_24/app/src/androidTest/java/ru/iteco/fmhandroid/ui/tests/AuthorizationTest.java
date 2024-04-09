@@ -8,12 +8,6 @@ import static ru.iteco.fmhandroid.ui.data.Data.validLogin;
 import static ru.iteco.fmhandroid.ui.data.Data.validPassword;
 import static ru.iteco.fmhandroid.ui.data.DataHelper.generateScreenshotName;
 import static ru.iteco.fmhandroid.ui.data.DataHelper.waitElement;
-import static ru.iteco.fmhandroid.ui.pages.AuthorizationPage.checkLogOutAndLogOutIfNot;
-import static ru.iteco.fmhandroid.ui.pages.AuthorizationPage.logOutIsVisible;
-import static ru.iteco.fmhandroid.ui.pages.AuthorizationPage.login;
-import static ru.iteco.fmhandroid.ui.pages.AuthorizationPage.loginOrPasswordDoesNotBeEmpty;
-import static ru.iteco.fmhandroid.ui.pages.AuthorizationPage.loginOrPasswordIsWrong;
-import static ru.iteco.fmhandroid.ui.pages.MainPage.LogOutId;
 
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.filters.LargeTest;
@@ -27,6 +21,8 @@ import io.qameta.allure.android.rules.ScreenshotRule;
 import io.qameta.allure.android.runners.AllureAndroidJUnit4;
 import io.qameta.allure.kotlin.junit4.DisplayName;
 import ru.iteco.fmhandroid.ui.AppActivity;
+import ru.iteco.fmhandroid.ui.pages.AuthorizationPage;
+import ru.iteco.fmhandroid.ui.pages.MainPage;
 
 
 @LargeTest
@@ -34,9 +30,12 @@ import ru.iteco.fmhandroid.ui.AppActivity;
 @DisplayName("Раздел \"Авторизация\"")
 public class AuthorizationTest {
 
+    AuthorizationPage authorizationPage = new AuthorizationPage();
+    MainPage mainPage = new MainPage();
+
     @Before
     public void setUp(){
-        checkLogOutAndLogOutIfNot();
+        authorizationPage.checkLogOutAndLogOutIfNot();
     }
 
     @Rule
@@ -45,33 +44,34 @@ public class AuthorizationTest {
     @Rule
     public ScreenshotRule screenshotRule = new ScreenshotRule(ScreenshotRule.Mode.FAILURE, generateScreenshotName("Failed"));
 
+
     @Test
     @DisplayName("Авторизация с тестовыми учетными данными")
     public void validLoginAndPasswordAuthorizationTest() {
-        login(validLogin, validPassword);
-        waitElement(LogOutId);
-        logOutIsVisible();
+        authorizationPage.login(validLogin, validPassword);
+        waitElement(mainPage.LogOutId);
+        mainPage.logOutIsVisible();
     }
 
     @Test
     @DisplayName("Авторизация при вводе невалидного логина")
     public void invalidLoginAuthorizationTest() {
-        login(invalidLogin, validPassword);
-        loginOrPasswordIsWrong();
+        authorizationPage.login(invalidLogin, validPassword);
+        authorizationPage.loginOrPasswordIsWrong();
     }
 
     @Test
     @DisplayName("Авторизация при вводе невалиного пароля")
     public void invalidPasswordAuthorizationTest() {
-        login(validLogin, invalidPassword);
-        loginOrPasswordIsWrong();
+        authorizationPage.login(validLogin, invalidPassword);
+        authorizationPage.loginOrPasswordIsWrong();
     }
 
     @Test
     @DisplayName("Авторизация при пустой форме")
     public void emptyLoginAndPasswordAuthorizationTest() {
-        login(emptyLogin,emptyPassword);
-        loginOrPasswordDoesNotBeEmpty();
+        authorizationPage.login(emptyLogin,emptyPassword);
+        authorizationPage.loginOrPasswordDoesNotBeEmpty();
     }
 
 }

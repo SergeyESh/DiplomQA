@@ -3,9 +3,6 @@ package ru.iteco.fmhandroid.ui.tests;
 import static ru.iteco.fmhandroid.ui.data.Data.urlPrivacyPolicy;
 import static ru.iteco.fmhandroid.ui.data.Data.urlTermsOfUse;
 import static ru.iteco.fmhandroid.ui.data.DataHelper.generateScreenshotName;
-import static ru.iteco.fmhandroid.ui.pages.AboutPage.isPageExists;
-import static ru.iteco.fmhandroid.ui.pages.AuthorizationPage.checkLogInAndLogInIfNot;
-import static ru.iteco.fmhandroid.ui.pages.MainPage.goToAboutPage;
 
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.filters.LargeTest;
@@ -19,16 +16,23 @@ import io.qameta.allure.android.rules.ScreenshotRule;
 import io.qameta.allure.android.runners.AllureAndroidJUnit4;
 import io.qameta.allure.kotlin.junit4.DisplayName;
 import ru.iteco.fmhandroid.ui.AppActivity;
+import ru.iteco.fmhandroid.ui.pages.AboutPage;
+import ru.iteco.fmhandroid.ui.pages.AuthorizationPage;
+import ru.iteco.fmhandroid.ui.pages.MainPage;
 
 @LargeTest
 @RunWith(AllureAndroidJUnit4.class)
 @DisplayName("Раздел \"О приложении\"")
 public class AboutPageTest {
 
+    AuthorizationPage authorizationPage = new AuthorizationPage();
+    AboutPage aboutPage = new AboutPage();
+    MainPage mainPage = new MainPage();
+
     @Before
     public void setUp(){
-        checkLogInAndLogInIfNot();
-        goToAboutPage();
+        authorizationPage.checkLogInAndLogInIfNot();
+        mainPage.goToAboutPage();
     }
 
     @Rule
@@ -40,13 +44,13 @@ public class AboutPageTest {
     @Test
     @DisplayName("Переход по ссылке на страницу с текстом Политики конфиденциальности")
     public void switchingUrlPrivacyPolicyTest() {
-        isPageExists(urlPrivacyPolicy);
+        aboutPage.isPageExists(urlPrivacyPolicy);
     }
 
     @Test
     @DisplayName("Переход по ссылке на страницу с текстом Пользовательского соглашения")
     public void switchingUrlTermsOfUseTest() {
-        isPageExists(urlTermsOfUse);
+        aboutPage.isPageExists(urlTermsOfUse);
     }
 
 }

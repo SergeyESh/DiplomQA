@@ -12,15 +12,11 @@ import static org.hamcrest.Matchers.allOf;
 import static ru.iteco.fmhandroid.ui.data.Data.validLogin;
 import static ru.iteco.fmhandroid.ui.data.Data.validPassword;
 import static ru.iteco.fmhandroid.ui.data.DataHelper.checkToast;
-import static ru.iteco.fmhandroid.ui.data.DataHelper.isLogIn;
-import static ru.iteco.fmhandroid.ui.data.DataHelper.isLogOut;
 import static ru.iteco.fmhandroid.ui.data.DataHelper.waitElement;
 import static ru.iteco.fmhandroid.ui.data.DataHelper.waitUntilVisible;
-import static ru.iteco.fmhandroid.ui.pages.MainPage.LogOutId;
-import static ru.iteco.fmhandroid.ui.pages.MainPage.logOutButton;
 
+import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.espresso.ViewInteraction;
-
 
 import io.qameta.allure.kotlin.Allure;
 import io.qameta.allure.kotlin.Step;
@@ -28,55 +24,74 @@ import ru.iteco.fmhandroid.R;
 
 public class AuthorizationPage {
 
-    public static ViewInteraction fieldLogin = onView(allOf(supportsInputMethods(), isDescendantOfA(withId(R.id.login_text_input_layout))));
-    public static ViewInteraction fieldPassword = onView(allOf(supportsInputMethods(), isDescendantOfA(withId(R.id.password_text_input_layout))));
-    public static ViewInteraction enterButton = onView(allOf(withId(R.id.enter_button)));
-    public static int enterButtonId = R.id.enter_button;
+    private ViewInteraction fieldLogin = onView(allOf(supportsInputMethods(), isDescendantOfA(withId(R.id.login_text_input_layout))));
+    private ViewInteraction fieldPassword = onView(allOf(supportsInputMethods(), isDescendantOfA(withId(R.id.password_text_input_layout))));
+    private ViewInteraction enterButton = onView(allOf(withId(R.id.enter_button)));
+    public int enterButtonId = R.id.enter_button;
 
-    @Step("Ввод логина и пароля.")
-    public static void login(String login, String password){
-            Allure.step("Вводим логин и пароль: " + login + ", " + password);
-        waitElement(AuthorizationPage.enterButtonId);
+    MainPage mainPage = new MainPage();
+
+    @Step("Авторизация в приложении.")
+    public void login(String login, String password){
+        Allure.step("Вводим логин и пароль: " + login + ", " + password);
+        waitElement(enterButtonId);
         fieldLogin.perform(replaceText(login));
         fieldPassword.perform(replaceText(password));
         enterButton.check(matches(isDisplayed())).perform(click());
     }
 
-    @Step("Выход из аккаунта.")
-    public static void logOut() {
-        Allure.step("Выходим из аккаунта, если авторизованы.");
-        onView(withId(LogOutId)).perform(click());
-        onView(withId(android.R.id.title)).check(matches(isDisplayed()));
-        onView(withId(android.R.id.title)).perform(click());
-    }
-
     @Step("Вход в аккаунт, если не авторизован.")
-    public static void checkLogInAndLogInIfNot() {
+    public void checkLogInAndLogInIfNot() {
         if (isLogIn()) {
             login(validLogin, validPassword);
         }
     }
 
     @Step("Выход из аккаунта, если авторизован.")
-    public static void checkLogOutAndLogOutIfNot() {
+    public void checkLogOutAndLogOutIfNot() {
         if (isLogOut()) {
-            logOut();
+            mainPage.logOut();
         }
     }
 
-    @Step("Проверка видимости кнопки выхода из аккаунта.")
-    public static void logOutIsVisible() {
-        logOutButton.check(matches(isDisplayed()));
-    }
-
     @Step("Проверка видимости сообщения об ошибке при пустых логине и/или пароле.")
-    public static void loginOrPasswordDoesNotBeEmpty() {
+    public void loginOrPasswordDoesNotBeEmpty() {
         waitUntilVisible(checkToast(R.string.empty_login_or_password, true));
     }
 
     @Step("Проверка видимости сообщения об ошибке при неправильных логине и/или пароле.")
-    public static void loginOrPasswordIsWrong() {
+    public void loginOrPasswordIsWrong() {
         waitUntilVisible(checkToast(R.string.wrong_login_or_password, true));
+    }
+
+    public boolean isLogIn() {
+        boolean check =false;
+        try {
+            waitElement(enterButtonId);
+            fieldLogin.check(matches(isDisplayed()));
+            check = true;
+            return check;
+        } catch (NoMatchingViewException e) {
+            check = false;
+            return check;
+        } finally {
+            return check;
+        }
+    }
+
+    public boolean isLogOut() {
+        boolean check =false;
+        try {
+            waitElement(mainPage.LogOutId);
+            mainPage.logOutIsVisible();
+            check = true;
+            return check;
+        } catch (NoMatchingViewException e) {
+            check = false;
+            return check;
+        } finally {
+            return check;
+        }
     }
 
 }

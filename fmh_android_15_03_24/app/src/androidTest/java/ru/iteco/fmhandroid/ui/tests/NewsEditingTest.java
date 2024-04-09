@@ -12,23 +12,10 @@ import static ru.iteco.fmhandroid.ui.data.Data.tittleNews2;
 import static ru.iteco.fmhandroid.ui.data.Data.tittleNews3;
 import static ru.iteco.fmhandroid.ui.data.DataHelper.generateScreenshotName;
 import static ru.iteco.fmhandroid.ui.data.DataHelper.waitElement;
-import static ru.iteco.fmhandroid.ui.pages.AuthorizationPage.checkLogInAndLogInIfNot;
-import static ru.iteco.fmhandroid.ui.pages.EditingNewsPage.addNews;
-import static ru.iteco.fmhandroid.ui.pages.EditingNewsPage.changeTittleNews;
-import static ru.iteco.fmhandroid.ui.pages.EditingNewsPage.checkNews;
-import static ru.iteco.fmhandroid.ui.pages.EditingNewsPage.checkNewsDeleted;
-import static ru.iteco.fmhandroid.ui.pages.EditingNewsPage.checkTittleAfterChange;
-import static ru.iteco.fmhandroid.ui.pages.EditingNewsPage.deleteNews;
-import static ru.iteco.fmhandroid.ui.pages.EditingNewsPage.editNews;
-import static ru.iteco.fmhandroid.ui.pages.MainPage.goToNewsEditingPage;
-import static ru.iteco.fmhandroid.ui.pages.MainPage.goToNewsPage;
-import static ru.iteco.fmhandroid.ui.pages.NewsPage.getItemCount;
-import static ru.iteco.fmhandroid.ui.pages.NewsPage.newsListId;
 
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.filters.LargeTest;
 
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -38,17 +25,26 @@ import io.qameta.allure.android.rules.ScreenshotRule;
 import io.qameta.allure.android.runners.AllureAndroidJUnit4;
 import io.qameta.allure.kotlin.junit4.DisplayName;
 import ru.iteco.fmhandroid.ui.AppActivity;
+import ru.iteco.fmhandroid.ui.pages.AuthorizationPage;
+import ru.iteco.fmhandroid.ui.pages.EditingNewsPage;
+import ru.iteco.fmhandroid.ui.pages.MainPage;
+import ru.iteco.fmhandroid.ui.pages.NewsPage;
 
 @LargeTest
 @RunWith(AllureAndroidJUnit4.class)
 @DisplayName("Раздел редактирования новостей")
 public class NewsEditingTest {
 
+    AuthorizationPage authorizationPage = new AuthorizationPage();
+    EditingNewsPage editingNewsPage = new EditingNewsPage();
+    MainPage mainPage = new MainPage();
+    NewsPage newsPage = new NewsPage();
+
     @Before
     public void setUp() {
-        checkLogInAndLogInIfNot();
-        goToNewsPage();
-        goToNewsEditingPage();
+        authorizationPage.checkLogInAndLogInIfNot();
+        mainPage.goToNewsPage();
+        newsPage.goToNewsEditingPage();
     }
 
     @Rule
@@ -60,27 +56,41 @@ public class NewsEditingTest {
     @Test
     @DisplayName("Создание новой новости")
     public void createdNewsTest() {
-        addNews(categoryNotification, tittleNews, dateNews, timeNews, descriptionNews);
-        editNews(tittleNews);
-        checkNews();
+        editingNewsPage.addNews(categoryNotification, tittleNews, dateNews, timeNews, descriptionNews);
+        editingNewsPage.editNews(tittleNews);
+        editingNewsPage.checkNews();
+    }
+
+    @Test
+    @DisplayName("Создание новой новости с пустыми полями")
+    public void createdNewsWithEmptyFieldsTest() {
+        editingNewsPage.addNewsWithEmptyFields();
+        editingNewsPage.fieldsDoesNotBeEmpty();
+    }
+
+    @Test
+    @DisplayName("Создание новой новости с пустым \"Заголовок\"")
+    public void createdNewsWithEmptyTittleTest() {
+        editingNewsPage.addNewsWithEmptyTittle(categoryNotification, dateNews, timeNews, descriptionNews);
+        editingNewsPage.fieldsDoesNotBeEmpty();
     }
 
     @Test
     @DisplayName("Редактирование новости: смена заголовка")
     public void changeNewsTest() {
-        addNews(categoryUnion, tittleNews2, dateNews, timeNews, descriptionNews);
-        editNews(tittleNews2);
-        changeTittleNews(newTittleNews);
-        editNews(newTittleNews);
-        checkTittleAfterChange(newTittleNews);
+        editingNewsPage.addNews(categoryUnion, tittleNews2, dateNews, timeNews, descriptionNews);
+        editingNewsPage.editNews(tittleNews2);
+        editingNewsPage.changeTittleNews(newTittleNews);
+        editingNewsPage.editNews(newTittleNews);
+        editingNewsPage.checkTittleAfterChange(newTittleNews);
     }
 
     @Test
     @DisplayName("Удаление новости")
     public void deleteNewsTest() {
-        addNews(categoryBirthday, tittleNews3, dateNews, timeNews, descriptionNews);
-        deleteNews(tittleNews3);
-        waitElement(newsListId);
-        checkNewsDeleted(getItemCount(), tittleNews3);
+        editingNewsPage.addNews(categoryBirthday, tittleNews3, dateNews, timeNews, descriptionNews);
+        editingNewsPage.deleteNews(tittleNews3);
+        waitElement(newsPage.newsListId);
+        editingNewsPage.checkNewsDeleted(newsPage.getItemCount(), tittleNews3);
     }
 }
